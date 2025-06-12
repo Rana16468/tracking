@@ -1,12 +1,11 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
-
 const generateToken = (
-  payload: { email?: string, role?: string, id?: string },
+  payload: { email?: string; role?: string; id?: string },
   secret: string,
-  expiresIn: string | number = '1h' 
+  expiresIn: string | number = '1h',
 ): string => {
-  const options:{} = { expiresIn };
+  const options: {} = { expiresIn };
   return jwt.sign(payload, secret, options);
 };
 

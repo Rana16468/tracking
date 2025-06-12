@@ -6,7 +6,6 @@ import config from './app/config';
 import ApiError from './app/error/ApiError';
 import httpStatus from 'http-status';
 
-
 let server: Server;
 
 async function main() {
@@ -37,7 +36,7 @@ async function main() {
         process.exit(1);
       }
     });
-   
+
     process.on('SIGTERM', () => {
       console.log('SIGTERM received');
       if (server) {
@@ -63,7 +62,6 @@ async function main() {
     });
 
     // connectSocket(server)
-    
   } catch (err: any) {
     throw new ApiError(
       httpStatus.SERVICE_UNAVAILABLE,
@@ -73,8 +71,6 @@ async function main() {
   }
 }
 
-
 main().then(() => {
-  console.log('-- Navyboy server is running---');
+  console.log('-- Tracking Server Is Running---');
 });
-

@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
 import { TBrowserDetails, TimeZoneModal } from './browser_details.interface';
-import { boolean } from 'zod';
+
 
 const TBrowserDetailsSchema = new Schema<TBrowserDetails, TimeZoneModal>(
   {

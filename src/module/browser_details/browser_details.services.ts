@@ -34,7 +34,7 @@ const createDetailsIntoDb = async (
       cache.set(cacheKey, timeZoneId);
     }
 
-    payload.timeZoneId = new mongoose.Types.ObjectId(timeZoneId);
+    payload.timeZoneId= new mongoose.Types.ObjectId(timeZoneId);
 
     const result = await browserdetails.findOneAndUpdate(
       { visitorId, isDelete: false },
@@ -64,5 +64,5 @@ const createDetailsIntoDb = async (
 };
 
 export default {
-  createDetailsIntoDb,
+  createDetailsIntoDb
 };
