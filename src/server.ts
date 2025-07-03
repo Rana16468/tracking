@@ -14,7 +14,7 @@ async function main() {
     console.log('database connected succesfully');
 
     server = app.listen(config.port, () => {
-      console.log(`navuboy app listening on port ${config.port}`);
+      console.log(`Tracking app listening on port ${config.port}`);
     });
 
     process.on('unhandledRejection', () => {
