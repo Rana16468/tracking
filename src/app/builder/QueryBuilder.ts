@@ -4,39 +4,34 @@ class QueryBuilder<T> {
   public modelQuery: Query<T[], T>;
   public query: Record<string, unknown>;
 
-  constructor(modelQuery: Query<T[], T>, query: Record<string, unknown>) {
+  constructor(modelQuery: Query<T[], T>, query: Record<string, unknown> = {}) {
     this.modelQuery = modelQuery;
     this.query = query;
   }
 
   search(searchableFields: string[]) {
-    const searchTerm = this?.query?.searchTerm;
+    const searchTerm = this.query?.searchTerm as string;
 
     if (searchTerm) {
-      // Apply $regex only to fields that are strings
       const stringFields = searchableFields.filter((field) => {
-        // Check if the field type in your schema is `String`
         const schemaPath = this.modelQuery.model.schema.path(field);
         return schemaPath && schemaPath.instance === 'String';
       });
 
       this.modelQuery = this.modelQuery.find({
-        $or: stringFields.map(
-          (field) =>
-            ({
-              [field]: { $regex: searchTerm, $options: 'i' },
-            }) as FilterQuery<T>,
-        ),
+        $or: stringFields.map((field) => ({
+          [field]: { $regex: searchTerm, $options: 'i' },
+        })) as FilterQuery<T>[],
       });
     }
 
     return this;
   }
 
-  //finter function
   filter() {
     let queryObject = { ...this.query };
-    if (this.query && this.query.maxPrice) {
+
+    if (this.query.maxPrice && this.query.minPrice) {
       queryObject = {
         price: {
           $gte: Number(this.query.minPrice),
@@ -44,6 +39,7 @@ class QueryBuilder<T> {
         },
       };
     }
+
     if (this.query?.releaseDate) {
       queryObject = {
         releaseDate: {
@@ -53,43 +49,39 @@ class QueryBuilder<T> {
       };
     }
 
-    const excludeField = ['searchTerm', 'sort', 'limit', 'page', 'fields'];
-    excludeField.forEach((el) => delete queryObject[el]);
+    const excludeFields = ['searchTerm', 'sort', 'limit', 'page', 'fields'];
+    excludeFields.forEach((el) => delete queryObject[el]);
 
     this.modelQuery = this.modelQuery.find(queryObject as FilterQuery<T>);
     return this;
   }
 
   sort() {
-    const sort =
-      (this?.query?.sort as string)?.split(',').join(' ') || '-createdAt';
-    this.modelQuery = this.modelQuery.sort(sort as string);
+    const sortBy = (this.query?.sort as string)?.split(',').join(' ') || '-createdAt';
+    this.modelQuery = this.modelQuery.sort(sortBy);
     return this;
   }
 
-  //pagination
-
   paginate() {
-    const limit = Math.max(Number(this.query.limit) || 10, 1);
-    const page = Math.max(Number(this.query.page) || 1, 1);
+    const limit = Math.max(Number(this.query?.limit ?? 10), 1);
+    const page = Math.max(Number(this.query?.page ?? 1), 1);
     const skip = (page - 1) * limit;
-    this.modelQuery = this.modelQuery.skip(skip).limit(limit);
 
+    this.modelQuery = this.modelQuery.skip(skip).limit(limit);
     return this;
   }
 
   fields() {
-    const field =
-      (this?.query?.fields as string)?.split(',').join(' ') || '-__v';
-    this.modelQuery = this.modelQuery.select(field);
+    const fields = (this.query?.fields as string)?.split(',').join(' ') || '-__v';
+    this.modelQuery = this.modelQuery.select(fields);
     return this;
   }
 
   async countTotal() {
     const totalQueries = this.modelQuery.getFilter();
     const total = await this.modelQuery.model.countDocuments(totalQueries);
-    const page = Number(this?.query?.page) || 1;
-    const limit = Number(this?.query?.limit) || 10;
+    const page = Math.max(Number(this.query?.page ?? 1), 1);
+    const limit = Math.max(Number(this.query?.limit ?? 10), 1);
     const totalPage = Math.ceil(total / limit);
 
     return {

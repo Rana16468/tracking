@@ -12,5 +12,6 @@ export type TContract={
     isDelete:boolean;
     isfavorite:Boolean;
     ContractId:Types.ObjectId;
+    deviceId: String;
 }
 

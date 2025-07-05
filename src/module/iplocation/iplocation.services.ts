@@ -4,11 +4,11 @@ import { TIplocation, IplocationResponse } from './iplocation.interface';
 import IplocationModel from './iplocation.model';
 
 export async function recordIpLocationIntoDb(
-  payload: TIplocation
+  payload: TIplocation,
 ): Promise<IplocationResponse> {
   try {
-
-    const { visitorId, city, region, country, lat, lon, service, isDelete } = payload;
+    const { visitorId, city, region, country, lat, lon, service, isDelete } =
+      payload;
 
     const updated = await IplocationModel.findOneAndUpdate(
       { visitorId, isDelete: false },
@@ -16,36 +16,35 @@ export async function recordIpLocationIntoDb(
       {
         new: true,
         upsert: true,
-        runValidators: true,      
-        setDefaultsOnInsert: true, 
-      }
+        runValidators: true,
+        setDefaultsOnInsert: true,
+      },
     )
       .lean()
       .exec();
 
     if (!updated) {
-      
       throw new ApiError(
         httpStatus.INTERNAL_SERVER_ERROR,
-        'Failed to record IP location', ''
+        'Failed to record IP location',
+        '',
       );
     }
 
     return { status: true, message: 'IP location recorded successfully' };
   } catch (err: any) {
-   
     if (err instanceof ApiError) throw err;
 
     throw new ApiError(
       httpStatus.INTERNAL_SERVER_ERROR,
       'Error in recordIpLocation service',
-      err.message
+      err.message,
     );
   }
 }
 
-const iplocation_services={
-    recordIpLocationIntoDb
-}
+const iplocation_services = {
+  recordIpLocationIntoDb,
+};
 
-export default  iplocation_services
+export default iplocation_services;

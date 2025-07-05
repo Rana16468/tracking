@@ -21,7 +21,7 @@ const createContract:RequestHandler=catchAsync(async(req,res)=>{
 
 const AllContract:RequestHandler=catchAsync(async(req,res)=>{
 
-    const result=await ContractService.AllContractIntoDb();
+    const result=await ContractService.AllContractIntoDb(req.query);
     sendRespone(res,{success:true,statusCode:httpStatus.OK,message:"Successfully Find All Conreact",data:result});
 
 });
