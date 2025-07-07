@@ -51,7 +51,7 @@ const createUserZodSchema = z.object({
       .default(USER_ACCESSIBILITY.isProgress),
 
     photo: z.string({ required_error: 'photo is not required' }).optional(),
-    address: z.string({required_error:"address is not required"}).optional(),
+    address: z.string({ required_error: 'address is not required' }).optional(),
     fcm: z.string({ required_error: 'fcm is not required' }).optional(),
   }),
 });

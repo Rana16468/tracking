@@ -15,8 +15,34 @@ const createTimeZone: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
+const findByAllTimeZone: RequestHandler = catchAsync(async (req, res) => {
+  const result = await TimeZoneServices.findByAllTimeZoneIntoDb(req.query);
+
+  sendRespone(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Successfully Find All Time Zone',
+    data: result,
+  });
+});
+
+
+const  delete_timezones:RequestHandler=catchAsync(async(req , res)=>{
+
+   const result=await TimeZoneServices.delete_timezones_IntoDb(req.params.id);
+   sendRespone(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Successfully Delete',
+    data: result,
+  });
+
+})
+
 const TimeZoneController = {
   createTimeZone,
+  findByAllTimeZone,
+  delete_timezones
 };
 
 export default TimeZoneController;

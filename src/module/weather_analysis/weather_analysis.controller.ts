@@ -16,7 +16,35 @@ const recorded_wather_info: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
+const findByAllWeatherAanlysis: RequestHandler = catchAsync(
+  async (req, res) => {
+    const result = await weather_analysis_services.findByAllWeatherAanlysistoDb(
+      req.query,
+    );
+    sendRespone(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Successfully Find By All Weather Data',
+      data: result,
+    });
+  },
+);
+
+const delete_weather_anlysis: RequestHandler = catchAsync(async (req, res) => {
+  const result = await weather_analysis_services.delete_weather_anlysis_IntoDb(
+    req.params.id,
+  );
+  sendRespone(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Successfully Delete',
+    data: result,
+  });
+});
+
 const weather_analysis_controller = {
   recorded_wather_info,
+  findByAllWeatherAanlysis,
+  delete_weather_anlysis
 };
 export default weather_analysis_controller;

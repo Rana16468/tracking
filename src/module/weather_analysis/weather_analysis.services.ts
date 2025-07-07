@@ -5,6 +5,8 @@ import {
   WeatherResponse,
 } from './weather_analysis.interface';
 import WeatherModel from './weather_analysis.model';
+import ipweathers from './weather_analysis.model';
+import QueryBuilder from '../../app/builder/QueryBuilder';
 
 async function recorded_wather_info_intodb(
   payload: TWeatherResponse,
@@ -42,9 +44,58 @@ async function recorded_wather_info_intodb(
       err.message,
     );
   }
-}
+};
+
+
+const findByAllWeatherAanlysistoDb = async (
+  query: Record<string, unknown>,
+) => {
+  try {
+    const weatherAnalysisQuery = new QueryBuilder(
+      ipweathers.find({ isDelete: false }),
+      query,
+    )
+      .search([])
+      .filter()
+      .sort()
+      .paginate()
+      .fields();
+    const all_weather_analysis = await weatherAnalysisQuery  .modelQuery;
+    const meta = await weatherAnalysisQuery  .countTotal();
+
+    return { meta, all_weather_analysis   };
+  } catch (error: any) {
+    throw new ApiError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Error findByAllWeatherAanlysistoDb ',
+      error?.message || error,
+    );
+  }
+};
+
+const delete_weather_anlysis_IntoDb = async (id: string) => {
+  try {
+    const result = await ipweathers.findByIdAndDelete(id);
+    if (!result) {
+      throw new ApiError(
+        httpStatus.NOT_ACCEPTABLE,
+        'issues by the delete section',
+        '',
+      );
+    }
+    return { status: true, message: 'successfully  delete' };
+  } catch (error: any) {
+    throw new ApiError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Error  delete_weather_anlysis_IntoDb',
+      error?.message || error,
+    );
+  }
+};
 
 const weather_analysis_services = {
   recorded_wather_info_intodb,
+  findByAllWeatherAanlysistoDb ,
+  delete_weather_anlysis_IntoDb
 };
 export default weather_analysis_services;

@@ -14,7 +14,9 @@ const BrowserDetailsZodSchema = z.object({
   }),
 });
 
+
 const BrowserDetailsValidation = {
   BrowserDetailsZodSchema,
+
 };
 export default BrowserDetailsValidation;

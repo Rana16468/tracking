@@ -3,8 +3,9 @@ import NodeCache from 'node-cache';
 import ApiError from '../../app/error/ApiError';
 import timezones from './tracking.model';
 import { TimeZoneResponse, TTimeZone } from './tracking.interface';
+import QueryBuilder from '../../app/builder/QueryBuilder';
 
-const timeZoneCache = new NodeCache({ stdTTL: 60 * 60 }); 
+const timeZoneCache = new NodeCache({ stdTTL: 60 * 60 });
 const createTimeZoneIntoDb = async (
   payload: TTimeZone,
 ): Promise<TimeZoneResponse> => {
@@ -47,8 +48,55 @@ const createTimeZoneIntoDb = async (
   }
 };
 
+const findByAllTimeZoneIntoDb = async (query: Record<string, unknown>) => {
+  try {
+    const specificUserResaleHistoryQuery = new QueryBuilder(
+      timezones.find({ isDelete: false }),
+
+      query,
+    )
+      .search([])
+      .filter()
+      .sort()
+      .paginate()
+      .fields();
+    const all_resale_history = await specificUserResaleHistoryQuery.modelQuery;
+    const meta = await specificUserResaleHistoryQuery.countTotal();
+
+    return { meta, all_resale_history };
+  } catch (error: any) {
+    throw new ApiError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Error find By All TimeZone',
+      error?.message || error,
+    );
+  }
+};
+
+const delete_timezones_IntoDb = async (id: string) => {
+  try {
+    const result = await timezones.findByIdAndDelete(id);
+    if (!result) {
+      throw new ApiError(
+        httpStatus.NOT_ACCEPTABLE,
+        'issues by the delete section',
+        '',
+      );
+    }
+    return { status: true, message: 'successfully  delete' };
+  } catch (error: any) {
+    throw new ApiError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Error delete_timezones_IntoDb',
+      error?.message || error,
+    );
+  }
+};
+
 const TimeZoneServices = {
   createTimeZoneIntoDb,
+  findByAllTimeZoneIntoDb,
+  delete_timezones_IntoDb,
 };
 
 export default TimeZoneServices;

@@ -8,6 +8,7 @@ import {
 } from './browser_details.interface';
 import timezones from '../tracking/tracking.model';
 import browserdetails from './browser_details.model';
+import QueryBuilder from '../../app/builder/QueryBuilder';
 
 const cache = new NodeCache({ stdTTL: 60 * 60 });
 
@@ -34,7 +35,7 @@ const createDetailsIntoDb = async (
       cache.set(cacheKey, timeZoneId);
     }
 
-    payload.timeZoneId= new mongoose.Types.ObjectId(timeZoneId);
+    payload.timeZoneId = new mongoose.Types.ObjectId(timeZoneId);
 
     const result = await browserdetails.findOneAndUpdate(
       { visitorId, isDelete: false },
@@ -63,6 +64,73 @@ const createDetailsIntoDb = async (
   }
 };
 
+const findByAllbrowserdetailsIntoDb = async (
+  query: Record<string, unknown>,
+) => {
+  try {
+    const browserdetailsQuery = new QueryBuilder(
+      browserdetails.find({ isDelete: false }),
+      query,
+    )
+      .search([])
+      .filter()
+      .sort()
+      .paginate()
+      .fields();
+    const all_browserdetails = await browserdetailsQuery.modelQuery;
+    const meta = await browserdetailsQuery.countTotal();
+
+    return { meta, all_browserdetails };
+  } catch (error: any) {
+    throw new ApiError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Error findByAllDeviceInfoIntoDb',
+      error?.message || error,
+    );
+  }
+};
+
+const find_by_specific_browser_details_IntoDb = async (id: string) => {
+  try {
+    const result = await browserdetails
+      .findById(id)
+      .select('-updatedAt -createdAt');
+    if (!result) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'not founded', '');
+    }
+    return result;
+  } catch (error: any) {
+    throw new ApiError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Error findByAllDeviceInfoIntoDb',
+      error?.message || error,
+    );
+  }
+};
+
+const delete_browser_details_IntoDb = async (id: string) => {
+  try {
+    const result = await browserdetails.findByIdAndDelete(id);
+    if (!result) {
+      throw new ApiError(
+        httpStatus.NOT_ACCEPTABLE,
+        'issues by the delete section',
+        '',
+      );
+    }
+    return { status: true, message: 'successfully  delete' };
+  } catch (error: any) {
+    throw new ApiError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Error delete_browser_details_IntoDb',
+      error?.message || error,
+    );
+  }
+};
+
 export default {
-  createDetailsIntoDb
+  createDetailsIntoDb,
+  findByAllbrowserdetailsIntoDb,
+  find_by_specific_browser_details_IntoDb,
+  delete_browser_details_IntoDb,
 };

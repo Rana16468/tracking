@@ -20,8 +20,37 @@ const recorded_device_info_items: RequestHandler = catchAsync(
   },
 );
 
+const findByAlldeviceinfoitems: RequestHandler = catchAsync(
+  async (req, res) => {
+    const result =
+      await sevice_info_items_services.findByAlldeviceinfoitemsIntoDb(
+        req.query,
+      );
+    sendRespone(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Successfully Find By All Device Information Items',
+      data: result,
+    });
+  },
+);
+
+
+const delete_deviceinfoitems:RequestHandler=catchAsync(async(req , res)=>{
+
+    const result=await sevice_info_items_services.delete_deviceinfoitems_IntoDb(req.params.id);
+     sendRespone(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Successfully Delete',
+      data: result,
+    });
+})
+
 const sevice_info_items_controller = {
   recorded_device_info_items,
+  findByAlldeviceinfoitems,
+   delete_deviceinfoitems
 };
 
 export default sevice_info_items_controller;
