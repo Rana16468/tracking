@@ -6,6 +6,7 @@ import users from '../user/user.model';
 import { USER_ACCESSIBILITY, USER_ROLE } from '../user/user.constant';
 import { jwtHelpers } from '../../app/helper/jwtHelpers';
 import config from '../../app/config';
+import QueryBuilder from '../../app/builder/QueryBuilder';
 
 const loginUserIntoDb = async (payload: TAuth) => {
   const session = await mongoose.startSession();
@@ -99,11 +100,45 @@ const adminValidationIntoDb = async (userId: string, id: string) => {
 };
 
 
+const find_by_all_users_IntoDb=async(query: Record<string, unknown>)=>{
+
+  try{
+
+     const allusersQuery = new QueryBuilder(
+          users.find({ isDelete: false }),
+          query,
+        )
+          .search([])
+          .filter()
+          .sort()
+          .paginate()
+          .fields();
+        const allusers = await allusersQuery.modelQuery;
+        const meta = await allusersQuery.countTotal();
+    
+        return { meta, allusers };
+
+  }
+  catch (err: any) {
+    if (err instanceof ApiError) throw err;
+
+    throw new ApiError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Error in find_by_all_users_IntoDb',
+      err.message,
+    );
+  }
+
+
+}
+
+
 
 
 const AuthServices = {
   loginUserIntoDb,
   adminValidationIntoDb,
+  find_by_all_users_IntoDb
 };
 
 export default AuthServices;

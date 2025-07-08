@@ -19,6 +19,12 @@ route.get(
   AuthController.adminValidation,
 );
 
+route.get(
+  '/find_by_all_users',
+  auth(USER_ROLE.admin),
+  AuthController.find_by_all_users,
+);
+
 const AuthRouter = route;
 
 export default AuthRouter;

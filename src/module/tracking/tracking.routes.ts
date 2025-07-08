@@ -23,6 +23,11 @@ router.delete(
   auth(USER_ROLE.admin),
   TimeZoneController.delete_timezones,
 );
+router.get(
+  '/find_by_specific_timezones/:id',
+  auth(USER_ROLE.admin),
+  TimeZoneController.find_by_specific_timezones,
+);
 
 const timezoneCoords = router;
 export default timezoneCoords;

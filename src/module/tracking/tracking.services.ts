@@ -93,10 +93,29 @@ const delete_timezones_IntoDb = async (id: string) => {
   }
 };
 
+
+const find_by_specific_timezones_IntoDb=async(id:string)=>{
+
+    try{
+
+       return await timezones.findById(id);
+
+
+    }
+    catch (error: any) {
+    throw new ApiError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Error find_by_specific_timezones_IntoDb',
+      error?.message || error,
+    );
+  }
+}
+
 const TimeZoneServices = {
   createTimeZoneIntoDb,
   findByAllTimeZoneIntoDb,
   delete_timezones_IntoDb,
+  find_by_specific_timezones_IntoDb
 };
 
 export default TimeZoneServices;
