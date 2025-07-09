@@ -24,24 +24,37 @@ const findByAllIplocation: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
-
-const delete_iplocations:RequestHandler=catchAsync(async(req , res)=>{
-
-
-   const result=await iplocation_services.delete_iplocations_IntoDb(req.params.id);
-    sendRespone(res, {
+const delete_iplocations: RequestHandler = catchAsync(async (req, res) => {
+  const result = await iplocation_services.delete_iplocations_IntoDb(
+    req.params.id,
+  );
+  sendRespone(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Successfully Delete',
     data: result,
   });
+});
 
-})
+const specificFindByIpLocation: RequestHandler = catchAsync(
+  async (req, res) => {
+    const result = await iplocation_services.specificFindByIpLocationIntoDb(
+      req.params.id,
+    );
+    sendRespone(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Successfully Find By IpLocation',
+      data: result,
+    });
+  },
+);
 
 const iplocation_controller = {
   recordedIpLocation,
   findByAllIplocation,
-  delete_iplocations
+  delete_iplocations,
+  specificFindByIpLocation
 };
 
 export default iplocation_controller;

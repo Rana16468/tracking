@@ -43,11 +43,9 @@ export async function recordIpLocationIntoDb(
       err.message,
     );
   }
-};
+}
 
-const findByAllIplocationtoDb = async (
-  query: Record<string, unknown>,
-) => {
+const findByAllIplocationtoDb = async (query: Record<string, unknown>) => {
   try {
     const iplocationsQuery = new QueryBuilder(
       iplocations.find({ isDelete: false }),
@@ -58,10 +56,22 @@ const findByAllIplocationtoDb = async (
       .sort()
       .paginate()
       .fields();
-    const all_iplocations = await iplocationsQuery .modelQuery;
-    const meta = await iplocationsQuery .countTotal();
+    const all_iplocations = await iplocationsQuery.modelQuery;
+    const meta = await iplocationsQuery.countTotal();
 
-    return { meta, all_iplocations  };
+    return { meta, all_iplocations };
+  } catch (error: any) {
+    throw new ApiError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Error find By All Iplocation toDb',
+      error?.message || error,
+    );
+  }
+};
+
+const specificFindByIpLocationIntoDb = async (id: string) => {
+  try {
+    return await iplocations.findById(id).select('-updatedAt -createdAt');
   } catch (error: any) {
     throw new ApiError(
       httpStatus.INTERNAL_SERVER_ERROR,
@@ -73,7 +83,7 @@ const findByAllIplocationtoDb = async (
 
 const delete_iplocations_IntoDb = async (id: string) => {
   try {
-    const result = await  iplocations.findByIdAndDelete(id);
+    const result = await iplocations.findByIdAndDelete(id);
     if (!result) {
       throw new ApiError(
         httpStatus.NOT_ACCEPTABLE,
@@ -93,8 +103,9 @@ const delete_iplocations_IntoDb = async (id: string) => {
 
 const iplocation_services = {
   recordIpLocationIntoDb,
-   findByAllIplocationtoDb,
-   delete_iplocations_IntoDb
+  findByAllIplocationtoDb,
+  delete_iplocations_IntoDb,
+  specificFindByIpLocationIntoDb,
 };
 
 export default iplocation_services;

@@ -14,6 +14,12 @@ router.patch(
 );
 
 router.get(
+  '/specific_findby_iplocation/:id',
+  auth(USER_ROLE.admin),
+  iplocation_controller.specificFindByIpLocation,
+);
+
+router.get(
   '/find_by_all_Ip_location',
   auth(USER_ROLE.admin),
   iplocation_controller.findByAllIplocation,
@@ -24,6 +30,8 @@ router.delete(
   auth(USER_ROLE.admin),
   iplocation_controller.delete_iplocations,
 );
+
+
 
 const IpLocationRoutes = router;
 export default IpLocationRoutes;
