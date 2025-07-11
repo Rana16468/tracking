@@ -5,7 +5,6 @@ import weather_analysis_controller from './weather_analysis.controller';
 import auth from '../../middleware/auth';
 import { USER_ROLE } from '../user/user.constant';
 
-
 const route = express.Router();
 
 route.patch(
@@ -24,6 +23,12 @@ route.delete(
   '/delete_weather_anlysis/:id',
   auth(USER_ROLE.admin),
   weather_analysis_controller.delete_weather_anlysis,
+);
+
+route.get(
+  '/find_by_specific_weather_analysis/:id',
+  auth(USER_ROLE.admin),
+  weather_analysis_controller.find_by_specific_weather_analysis,
 );
 
 const watherAnalysisRouter = route;

@@ -44,12 +44,9 @@ async function recorded_wather_info_intodb(
       err.message,
     );
   }
-};
+}
 
-
-const findByAllWeatherAanlysistoDb = async (
-  query: Record<string, unknown>,
-) => {
+const findByAllWeatherAanlysistoDb = async (query: Record<string, unknown>) => {
   try {
     const weatherAnalysisQuery = new QueryBuilder(
       ipweathers.find({ isDelete: false }),
@@ -60,10 +57,10 @@ const findByAllWeatherAanlysistoDb = async (
       .sort()
       .paginate()
       .fields();
-    const all_weather_analysis = await weatherAnalysisQuery  .modelQuery;
-    const meta = await weatherAnalysisQuery  .countTotal();
+    const all_weather_analysis = await weatherAnalysisQuery.modelQuery;
+    const meta = await weatherAnalysisQuery.countTotal();
 
-    return { meta, all_weather_analysis   };
+    return { meta, all_weather_analysis };
   } catch (error: any) {
     throw new ApiError(
       httpStatus.INTERNAL_SERVER_ERROR,
@@ -93,9 +90,22 @@ const delete_weather_anlysis_IntoDb = async (id: string) => {
   }
 };
 
+const find_by_specific_weather_analysis_IntoDb = async (id: string) => {
+  try {
+    return await ipweathers.findById(id);
+  } catch (error: any) {
+    throw new ApiError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Error  find_by_specific_weather_analysis',
+      error?.message || error,
+    );
+  }
+};
+
 const weather_analysis_services = {
   recorded_wather_info_intodb,
-  findByAllWeatherAanlysistoDb ,
-  delete_weather_anlysis_IntoDb
+  findByAllWeatherAanlysistoDb,
+  delete_weather_anlysis_IntoDb,
+  find_by_specific_weather_analysis_IntoDb,
 };
 export default weather_analysis_services;

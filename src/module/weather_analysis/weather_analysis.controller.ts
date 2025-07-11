@@ -42,9 +42,25 @@ const delete_weather_anlysis: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
+const find_by_specific_weather_analysis: RequestHandler = catchAsync(
+  async (req, res) => {
+    const result =
+      await weather_analysis_services.find_by_specific_weather_analysis_IntoDb(
+        req.params.id,
+      );
+    sendRespone(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Successfully find by the specific weather analysis',
+      data: result,
+    });
+  },
+);
+
 const weather_analysis_controller = {
   recorded_wather_info,
   findByAllWeatherAanlysis,
-  delete_weather_anlysis
+  delete_weather_anlysis,
+  find_by_specific_weather_analysis
 };
 export default weather_analysis_controller;
