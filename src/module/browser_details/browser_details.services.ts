@@ -72,7 +72,7 @@ const findByAllbrowserdetailsIntoDb = async (
       browserdetails.find({ isDelete: false }),
       query,
     )
-      .search([])
+      .search(['visitorId',"_id","timezone","platform"])
       .filter()
       .sort()
       .paginate()

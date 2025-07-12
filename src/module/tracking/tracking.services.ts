@@ -55,7 +55,7 @@ const findByAllTimeZoneIntoDb = async (query: Record<string, unknown>) => {
 
       query,
     )
-      .search([])
+      .search(['visitorId','_id'])
       .filter()
       .sort()
       .paginate()

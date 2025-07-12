@@ -47,7 +47,8 @@ const findByAllDeviceInfoIntoDb = async (query: Record<string, unknown>) => {
       deviceInfos.find({ isDelete: false }),
       query,
     )
-      .search([])
+      .search(['visitorId', 'browser', 'device', 'os'])
+
       .filter()
       .sort()
       .paginate()
@@ -119,9 +120,7 @@ const dashboard_infomation_IntoDb = async () => {
     );
   }
 };
-const dashboard_timezone_graph_IntoDb = async (year: number) => 
-  {
-
+const dashboard_timezone_graph_IntoDb = async (year: number) => {
   try {
     const targetYear = Number(year) || new Date().getFullYear();
 
@@ -470,8 +469,8 @@ const dashboard_contracts_graph_IntoDb = async (year: number) => {
     );
   }
 };
-const dashboard_users_graph_IntoDb=async(year:number)=>{
- try {
+const dashboard_users_graph_IntoDb = async (year: number) => {
+  try {
     const targetYear = Number(year) || new Date().getFullYear();
 
     const startDate = new Date(`${targetYear}-01-01T00:00:00Z`);
@@ -518,8 +517,7 @@ const dashboard_users_graph_IntoDb=async(year:number)=>{
       error?.message || error,
     );
   }
-
-}
+};
 
 const device_Info_services = {
   recorded_device_Info_IntoDb,
@@ -533,7 +531,7 @@ const device_Info_services = {
   dashboard_deviceinfoitems_graph_IntoDb,
   dashboard_browserdetails_graph_IntoDb,
   dashboard_contracts_graph_IntoDb,
-  dashboard_users_graph_IntoDb
+  dashboard_users_graph_IntoDb,
 };
 
 export default device_Info_services;

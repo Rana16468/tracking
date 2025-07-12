@@ -52,7 +52,13 @@ const findByAllWeatherAanlysistoDb = async (query: Record<string, unknown>) => {
       ipweathers.find({ isDelete: false }),
       query,
     )
-      .search([])
+      .search([
+        'visitorId',
+        'location.name',
+        'location.region',
+        'location.country',
+        'location.tz_id',
+      ])
       .filter()
       .sort()
       .paginate()

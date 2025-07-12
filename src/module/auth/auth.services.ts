@@ -108,7 +108,7 @@ const find_by_all_users_IntoDb=async(query: Record<string, unknown>)=>{
           users.find({ isDelete: false }),
           query,
         )
-          .search([])
+          .search(['name','email','phoneNumber'])
           .filter()
           .sort()
           .paginate()

@@ -58,7 +58,15 @@ const findByAlldeviceinfoitemsIntoDb = async (
       deviceinfoitems.find({ isDelete: false }),
       query,
     )
-      .search([])
+      .search([
+        'visitorId',
+        'colorDepth',
+        'connectionType',
+        'deviceMemory',
+        'platform',
+        'screenResolution',
+        'timezone',
+      ])
       .filter()
       .sort()
       .paginate()
@@ -78,7 +86,7 @@ const findByAlldeviceinfoitemsIntoDb = async (
 
 const delete_deviceinfoitems_IntoDb = async (id: string) => {
   try {
-    const result = await  deviceinfoitems.findByIdAndDelete(id);
+    const result = await deviceinfoitems.findByIdAndDelete(id);
     if (!result) {
       throw new ApiError(
         httpStatus.NOT_ACCEPTABLE,
@@ -99,7 +107,7 @@ const delete_deviceinfoitems_IntoDb = async (id: string) => {
 const sevice_info_items_services = {
   recorded_device_info_items_IntoDb,
   findByAlldeviceinfoitemsIntoDb,
-  delete_deviceinfoitems_IntoDb
+  delete_deviceinfoitems_IntoDb,
 };
 
 export default sevice_info_items_services;

@@ -51,7 +51,7 @@ const findByAllIplocationtoDb = async (query: Record<string, unknown>) => {
       iplocations.find({ isDelete: false }),
       query,
     )
-      .search([])
+      .search(['visitorId', 'city', 'country', 'region'])
       .filter()
       .sort()
       .paginate()
