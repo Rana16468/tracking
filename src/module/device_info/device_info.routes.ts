@@ -80,6 +80,12 @@ router.get(
   device_Info_controller.dashboard_users_graph,
 );
 
+router.delete(
+  `/delete_deviceInfos/:id`,
+  auth(USER_ROLE.admin),
+  device_Info_controller.delete_deviceInfos,
+);
+
 const DeviceInfoRoutes = router;
 
 export default DeviceInfoRoutes;
