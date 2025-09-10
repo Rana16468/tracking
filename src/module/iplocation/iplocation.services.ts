@@ -5,16 +5,16 @@ import IplocationModel from './iplocation.model';
 import QueryBuilder from '../../app/builder/QueryBuilder';
 import iplocations from './iplocation.model';
 
-export async function recordIpLocationIntoDb(
+ async function recordIpLocationIntoDb(
   payload: TIplocation,
 ): Promise<IplocationResponse> {
   try {
-    const { visitorId, city, region, country, lat, lon, service, isDelete } =
+    const { visitorId, ipLocation } =
       payload;
 
     const updated = await IplocationModel.findOneAndUpdate(
       { visitorId, isDelete: false },
-      { visitorId, city, region, country, lat, lon, service, isDelete },
+      { visitorId, ipLocation},
       {
         new: true,
         upsert: true,
@@ -51,7 +51,7 @@ const findByAllIplocationtoDb = async (query: Record<string, unknown>) => {
       iplocations.find({ isDelete: false }),
       query,
     )
-      .search(['visitorId', 'city', 'country', 'region'])
+      .search(['visitorId','city'])
       .filter()
       .sort()
       .paginate()
@@ -101,11 +101,17 @@ const delete_iplocations_IntoDb = async (id: string) => {
   }
 };
 
+
+
+
+
 const iplocation_services = {
   recordIpLocationIntoDb,
   findByAllIplocationtoDb,
   delete_iplocations_IntoDb,
   specificFindByIpLocationIntoDb,
+
 };
+
 
 export default iplocation_services;

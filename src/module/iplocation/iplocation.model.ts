@@ -9,34 +9,13 @@ const IplocationSchema = new Schema<TIplocation, IplocationModal>(
       trim: true,
       unique: true,
     },
-    city: {
+
+    ipLocation: {
       type: String,
-      required: [true, 'city is required'],
+      required: [true, 'ip location'],
       trim: true,
     },
-    region: {
-      type: String,
-      required: [true, 'region is required'],
-      trim: true,
-    },
-    country: {
-      type: String,
-      required: [true, 'country is required'],
-      trim: true,
-    },
-    lat: {
-      type: Number,
-      required: [true, 'latitude is required'],
-    },
-    lon: {
-      type: Number,
-      required: [true, 'longitude is required'],
-    },
-    service: {
-      type: String,
-      required: [true, 'service is required'],
-      trim: true,
-    },
+
     isDelete: {
       type: Boolean,
       default: false,

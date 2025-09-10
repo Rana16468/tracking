@@ -50,11 +50,14 @@ const specificFindByIpLocation: RequestHandler = catchAsync(
   },
 );
 
+
+
 const iplocation_controller = {
   recordedIpLocation,
   findByAllIplocation,
   delete_iplocations,
   specificFindByIpLocation
+ 
 };
 
 export default iplocation_controller;

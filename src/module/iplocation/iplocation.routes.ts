@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.patch(
   '/recordedIpLocation',
-  validationRequest(IplocationValidation.create),
+  validationRequest(IplocationValidation.ipLocation),
   iplocation_controller.recordedIpLocation,
 );
 
@@ -30,7 +30,6 @@ router.delete(
   auth(USER_ROLE.admin),
   iplocation_controller.delete_iplocations,
 );
-
 
 
 const IpLocationRoutes = router;

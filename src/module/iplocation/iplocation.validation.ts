@@ -45,9 +45,17 @@ const updateIplocationSchema = z.object({
   }),
 });
 
+const ipLocationSchema = z.object({
+  body: z.object({
+    visitorId: z.string({ required_error: 'visitorId is required' }),
+    ipLocation: z.string({ required_error: 'ip location is required' }),
+  }),
+});
+
 const IplocationValidation = {
   create: createIplocationSchema,
   update: updateIplocationSchema,
+  ipLocation: ipLocationSchema,
 };
 
 export default IplocationValidation;

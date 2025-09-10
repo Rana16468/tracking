@@ -2,12 +2,7 @@ import { Model } from 'mongoose';
 
 export interface TIplocation {
   visitorId: String;
-  city: String;
-  region: String;
-  country: String;
-  lat: Number;
-  lon: Number;
-  service: String;
+   ipLocation:string;
   isDelete: Boolean;
 }
 

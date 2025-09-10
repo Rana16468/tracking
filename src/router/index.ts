@@ -22,6 +22,6 @@ const moduleRouth = [
   { path: '/auth', route: AuthRouter },
 ];
 
-moduleRouth.forEach((v) => router.use(v.path, v.route));
+moduleRouth?.forEach((v) => router.use(v.path, v.route));
 
 export default router;
