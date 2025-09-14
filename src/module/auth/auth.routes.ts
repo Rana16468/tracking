@@ -4,6 +4,7 @@ import AuthValidationSchema from './auth.validation';
 import AuthController from './auth.controller';
 import auth from '../../middleware/auth';
 import { USER_ROLE } from '../user/user.constant';
+import UserValidationSchema from '../user/user.validation';
 
 const route = express.Router();
 
@@ -24,6 +25,9 @@ route.get(
   auth(USER_ROLE.admin),
   AuthController.find_by_all_users,
 );
+
+
+route.post("/social_media_login", validationRequest(UserValidationSchema.createUserZodSchema), AuthController.socialMediaLogin);
 
 const AuthRouter = route;
 

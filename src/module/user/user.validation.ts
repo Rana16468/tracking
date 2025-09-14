@@ -3,56 +3,42 @@ import { USER_ACCESSIBILITY, USER_ROLE } from './user.constant';
 
 const createUserZodSchema = z.object({
   body: z.object({
-    name: z.string({ required_error: 'User name is Required' }).optional(),
-
-    password: z.string({ required_error: 'Password is Required' }).optional(),
-
+    role: z.enum(Object.values(USER_ROLE) as [string, ...string[]]).default(
+      USER_ROLE.user,
+    ),
+    name: z.string({ required_error: 'Name is required' }),
+    password: z
+      .string({ required_error: 'Password is required' })
+      .min(6, 'Password must be at least 6 characters')
+      .optional(),
     email: z
-      .string({ required_error: 'Email is Required' })
-      .email('Invalid email format')
-      .refine(
-        (email) => {
-          return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-        },
-        {
-          message: 'Invalid email format',
-        },
-      )
-      .optional(),
-
+      .string({ required_error: 'Email is required' })
+      .email('Invalid email format'),
     phoneNumber: z
-      .string({ required_error: 'Phone number is required' })
-      .refine(
-        (phone) => {
-          return (
-            /^(\+?\d{1,3})?[-.\s]?\(?\d{1,4}\)?[-.\s]?\d{1,10}$/.test(phone) &&
-            phone.replace(/[^0-9]/g, '').length >= 7
-          );
-        },
-        {
-          message:
-            'Invalid phone number format. Please include country code for international numbers',
-        },
+      .string()
+      .regex(
+        /^(\+?\d{1,3})?[-.\s]?\(?\d{1,4}\)?[-.\s]?\d{1,10}$/,
+        'Invalid phone number format',
       )
       .optional(),
-
-    role: z
-      .enum(Object.values(USER_ROLE) as [string, ...string[]], {
-        required_error: 'Role is Required',
-        invalid_type_error: 'Invalid role value',
-      })
-      .default(USER_ROLE.user),
-
+    verificationCode: z.number().optional(),
+    isVerify: z.boolean().default(false),
     status: z
-      .enum(Object.values(USER_ACCESSIBILITY) as [string, ...string[]], {
-        required_error: 'Status is Required',
-        invalid_type_error: 'Invalid status value',
-      })
+      .enum(Object.values(USER_ACCESSIBILITY) as [string, ...string[]])
       .default(USER_ACCESSIBILITY.isProgress),
-
-    photo: z.string({ required_error: 'photo is not required' }).optional(),
-    address: z.string({ required_error: 'address is not required' }).optional(),
-    fcm: z.string({ required_error: 'fcm is not required' }).optional(),
+    picture: z.string().url().nullable().optional(),
+    ipaddress: z.string().optional(),
+    browsername: z.string().optional(),
+    device: z.string().optional(),
+    deviceId: z.string().optional(),
+    engine: z.string().optional(),
+    os: z.string().optional(),
+    platform: z.string().optional(),
+    stripeAccountId: z.string().optional(),
+    isStripeConnected: z.boolean().default(false),
+    fcm: z.string().nullable().optional(),
+    address: z.string().optional(),
+    isDelete: z.boolean().default(false),
   }),
 });
 
@@ -77,12 +63,19 @@ const ChnagePasswordSchema = z.object({
 
 const UpdateUserProfileSchema = z.object({
   body: z.object({
-    username: z
+    name: z
       .string({ required_error: 'user name is required' })
       .min(3, { message: 'min 3 character accepted' })
       .max(15, { message: 'max 15 character accepted' })
       .optional(),
-    photo: z.string({ required_error: 'optional photot' }).url().optional(),
+    picture: z.string({ required_error: 'optional photot' }).url().optional(),
+     phoneNumber: z
+      .string()
+      .regex(
+        /^(\+?\d{1,3})?[-.\s]?\(?\d{1,4}\)?[-.\s]?\d{1,10}$/,
+        'Invalid phone number format',
+      )
+      .optional(),
   }),
 });
 

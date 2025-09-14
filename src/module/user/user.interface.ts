@@ -12,13 +12,27 @@ export type TUser = {
   id: string;
   role: 'user' | 'admin' | 'superAdmin';
   name: string;
-  password: string;
+  password?: string;
   email: string;
   phoneNumber?: string;
-  verificationCode: number;
+  verificationCode?: number;
   isVerify: boolean;
   status: 'isProgress' | 'Blocked';
-  photo?: string;
+  picture?: string;
+  ipaddress?:string;
+  browsername?:string;
+  device?:string;
+  deviceId?:string;
+  provider: {
+  type: String,
+  enum: ['googleauth', 'facebookauth', 'githubauth', 'emailpassword'], 
+  default: 'googleauth',
+  required: false,
+},
+
+  engine?:string;
+  os?:string;
+  platform?:string;
   stripeAccountId?: string;
   isStripeConnected?: boolean;
   fcm?:string;

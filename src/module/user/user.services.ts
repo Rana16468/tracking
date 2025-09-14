@@ -111,7 +111,7 @@ const chnagePasswordIntoDb = async (
         ],
       },
       { password: 1 },
-    );
+    ) as any;;
 
     if (!isUserExist) {
       throw new ApiError(httpStatus.NOT_FOUND, 'User not found', '');

@@ -6,75 +6,64 @@ import { TUser, UserModel } from './user.interface';
 
 const TUserSchema = new Schema<TUser, UserModel>(
   {
-    name: { type: String, required: [false, 'user name is Required'] },
-    password: { type: String, required: [false, 'Password is Required'] },
+    role: {
+      type: String,
+      enum: Object.values(USER_ROLE),
+      default: USER_ROLE.user,
+      required: [true, 'Role is required'],
+    },
+    name: { type: String, required: [true, 'Name is required'] },
+    password: { type: String, required: [false, 'Password is required'] },
     email: {
       type: String,
-      required: [false, 'Email is Required'],
+      required: [true, 'Email is required'],
       trim: true,
       unique: true,
     },
     phoneNumber: {
       type: String,
-      required: [false, 'phone number is required'],
+      required: [false, 'phone number is  not required'],
       unique: true,
     },
     verificationCode: {
       type: Number,
-      required: [false, 'verification Code is Required'],
+      required: [false, ' verification Code is not required'],
       unique: true,
     },
     isVerify: {
       type: Boolean,
-      required: [false, 'isVartify is not required'],
+      required: [false, 'is verify not required'],
       default: false,
-    },
-    role: {
-      type: String,
-      enum: {
-        values: [USER_ROLE.admin, USER_ROLE.user],
-        message: '{VALUE} is Not Required',
-      },
-      required: [true, 'Role is Required'],
-      default: USER_ROLE.user,
     },
     status: {
       type: String,
-      enum: {
-        values: [USER_ACCESSIBILITY.isProgress, USER_ACCESSIBILITY.blocked],
-        message: '{VALUE} is not required',
-      },
-      required: [true, 'Status is Required'],
-      default: USER_ACCESSIBILITY.isProgress as any,
+      enum: Object.values(USER_ACCESSIBILITY),
+      default: USER_ACCESSIBILITY.isProgress,
+      required: [true ,'statis is  required'],
     },
-    photo: {
+    picture: {
       type: String,
-      required: [false, 'photo is not required'],
+      required:[false, 'picture is not required'],
       default: null,
     },
-
-    stripeAccountId: {
+    ipaddress: { type: String, required: [false, 'ipaddress is not required'] },
+    browsername: { type: String, required: [false, 'browser name is not required'] },
+    device: { type: String, required: [false, 'browser name is not required'] },
+    deviceId: { type: String, unique: true, required: [false, 'deviceId required'] },
+      provider: {
       type: String,
-      required: false,
+      enum: ['googleauth', 'facebookauth', 'githubauth', 'emailpassword'],
+      default: 'googleauth',
     },
-    isStripeConnected: {
-      type: Boolean,
-      rquired: false,
-      default: false,
-    },
-    address: {
-      type: String,
-      required: [false, 'address is not required'],
-    },
-    fcm: {
-      type: String,
-      required: [false, 'fcm is not  required'],
-      default: null,
-    },
+    engine: { type: String, required: false },
+    os: { type: String, required: false },
+    platform: { type: String, required: false },
+    
+    address: { type: String, required: false },
     isDelete: {
       type: Boolean,
-      required: [true, 'isDeleted is Required'],
       default: false,
+      required: false,
     },
   },
   {
@@ -83,6 +72,7 @@ const TUserSchema = new Schema<TUser, UserModel>(
   },
 );
 
+// Remove password from JSON
 TUserSchema.set('toJSON', {
   virtuals: true,
   transform: function (doc, ret) {
@@ -91,10 +81,10 @@ TUserSchema.set('toJSON', {
   },
 });
 
-// mongoose middleware
+// Hash password before save
 TUserSchema.pre('save', async function (next) {
-  const user = this;
-  if (user.isModified('password')) {
+  const user = this as any;
+  if (user.isModified('password') && user.password) {
     user.password = await bcrypt.hash(
       user.password,
       Number(config.bcrypt_salt_rounds),
@@ -103,18 +93,15 @@ TUserSchema.pre('save', async function (next) {
   next();
 });
 
+// Clear password after save
 TUserSchema.post('save', function (doc, next) {
   doc.password = '';
   next();
 });
 
+// Exclude soft-deleted docs
 TUserSchema.pre('find', function (next) {
   this.find({ isDelete: { $ne: true } });
-  next();
-});
-
-TUserSchema.pre('aggregate', function (next) {
-  this.pipeline().unshift({ $match: { isDelete: { $ne: true } } });
   next();
 });
 
@@ -123,6 +110,12 @@ TUserSchema.pre('findOne', function (next) {
   next();
 });
 
+TUserSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { isDelete: { $ne: true } } });
+  next();
+});
+
+// Static methods
 TUserSchema.statics.isUserExistByCustomId = async function (id: string) {
   return await users.findOne({ id });
 };
@@ -131,8 +124,7 @@ TUserSchema.statics.isPasswordMatched = async function (
   plainTextPassword: string,
   hashPassword: string,
 ) {
-  const password = await bcrypt.compare(plainTextPassword, hashPassword);
-  return password;
+  return bcrypt.compare(plainTextPassword, hashPassword);
 };
 
 TUserSchema.statics.isJWTIssuesBeforePasswordChange = async function (

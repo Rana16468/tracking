@@ -3,10 +3,14 @@ import cors from 'cors';
 import notFound from './middleware/notFound';
 import globalErrorHandelar from './middleware/globalErrorHandelar';
 import router from './router';
+import cookieParser from 'cookie-parser';
 
 const app = express();
+app.use(cookieParser());
+
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 //middlewere
 //credentials:true
 //https://shoes-client.vercel.app

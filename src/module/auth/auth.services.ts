@@ -7,6 +7,7 @@ import { USER_ACCESSIBILITY, USER_ROLE } from '../user/user.constant';
 import { jwtHelpers } from '../../app/helper/jwtHelpers';
 import config from '../../app/config';
 import QueryBuilder from '../../app/builder/QueryBuilder';
+import { TUser } from '../user/user.interface';
 
 const loginUserIntoDb = async (payload: TAuth) => {
   const session = await mongoose.startSession();
@@ -25,7 +26,7 @@ const loginUserIntoDb = async (payload: TAuth) => {
       },
       { password: 1, _id: 1, isVerify: 1, email: 1, role: 1 },
       { session },
-    );
+    ) as any;
 
     if (!isUserExist) {
       throw new ApiError(httpStatus.NOT_FOUND, 'User not found', '');
@@ -130,7 +131,81 @@ const find_by_all_users_IntoDb=async(query: Record<string, unknown>)=>{
   }
 
 
-}
+};
+
+
+
+
+const socialMediaLoginIntoDb = async (payload: Partial<TUser>) => {
+  let session: mongoose.ClientSession | null = null;
+
+  try {
+    session = await mongoose.startSession();
+    session.startTransaction();
+
+    const isUserExist = await users.findOne(
+      {
+        email: payload.email,
+        isDelete: false,
+        status: USER_ACCESSIBILITY.isProgress,
+      },
+      { _id: 1, role: 1, email: 1, isVerify: 1 },
+      { session },
+    );
+
+    let jwtPayload;
+
+    if (!isUserExist) {
+      // New user from social login
+      payload.isVerify = true; // auto-verified for social accounts
+      const newUser = new users(payload);
+      const savedUser = await newUser.save({ session });
+
+      jwtPayload = {
+        id: savedUser._id.toString(),
+        role: savedUser.role,
+        email: savedUser.email,
+      };
+    } else if (isUserExist.isVerify) {
+      // Existing verified user
+      jwtPayload = {
+        id: isUserExist._id.toString(),
+        role: isUserExist.role,
+        email: isUserExist.email,
+      };
+    } else {
+      // User exists but not verified → block login
+      throw new ApiError(
+        httpStatus.UNAUTHORIZED,
+        'User exists but is not verified. Please verify your account.', ''
+      );
+    }
+
+    // Generate tokens
+    const accessToken = jwtHelpers.generateToken(
+      jwtPayload,
+      config.jwt_access_secret as string,
+      config.expires_in as string,
+    );
+
+    const refreshToken = jwtHelpers.generateToken(
+      jwtPayload,
+      config.jwt_refresh_secret as string,
+      config.refresh_expires_in as string,
+    );
+
+    await session.commitTransaction();
+    return { accessToken, refreshToken };
+  } catch (error) {
+    if (session) await session.abortTransaction();
+    throw error;
+  } finally {
+    if (session) session.endSession();
+  }
+};
+
+    
+
 
 
 
@@ -138,7 +213,8 @@ const find_by_all_users_IntoDb=async(query: Record<string, unknown>)=>{
 const AuthServices = {
   loginUserIntoDb,
   adminValidationIntoDb,
-  find_by_all_users_IntoDb
+  find_by_all_users_IntoDb,
+  socialMediaLoginIntoDb
 };
 
 export default AuthServices;
