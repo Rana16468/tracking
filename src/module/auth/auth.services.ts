@@ -142,46 +142,25 @@ const socialMediaLoginIntoDb = async (payload: Partial<TUser>) => {
   try {
     session = await mongoose.startSession();
     session.startTransaction();
+    payload.isVerify = true;
+    const updatedUser = await users.findOneAndUpdate(
+      { email: payload.email, isDelete: false },
+      { $set: payload },
+      { new: true, upsert: true, session }
+    ).lean();
 
-    const isUserExist = await users.findOne(
-      {
-        email: payload.email,
-        isDelete: false,
-        status: USER_ACCESSIBILITY.isProgress,
-      },
-      { _id: 1, role: 1, email: 1, isVerify: 1 },
-      { session },
-    );
-
-    let jwtPayload;
-
-    if (!isUserExist) {
-      // New user from social login
-      payload.isVerify = true; // auto-verified for social accounts
-      const newUser = new users(payload);
-      const savedUser = await newUser.save({ session });
-
-      jwtPayload = {
-        id: savedUser._id.toString(),
-        role: savedUser.role,
-        email: savedUser.email,
-      };
-    } else if (isUserExist.isVerify) {
-      // Existing verified user
-      jwtPayload = {
-        id: isUserExist._id.toString(),
-        role: isUserExist.role,
-        email: isUserExist.email,
-      };
-    } else {
-      // User exists but not verified → block login
+    if (!updatedUser) {
       throw new ApiError(
-        httpStatus.UNAUTHORIZED,
-        'User exists but is not verified. Please verify your account.', ''
+        httpStatus.INTERNAL_SERVER_ERROR,
+        'Failed to create or update user', ''
       );
     }
 
-    // Generate tokens
+    const jwtPayload = {
+      id: updatedUser._id.toString(),
+      role: updatedUser.role,
+      email: updatedUser.email,
+    };
     const accessToken = jwtHelpers.generateToken(
       jwtPayload,
       config.jwt_access_secret as string,
@@ -204,6 +183,42 @@ const socialMediaLoginIntoDb = async (payload: Partial<TUser>) => {
   }
 };
 
+
+
+const  findMyProfileIntoDb=async(userId:string)=>{
+
+   try{
+
+    return  await users.findById(userId).select("name photo  isVerify picture").lean();
+
+   }
+     catch (err: any) {
+    if (err instanceof ApiError) throw err;
+
+    throw new ApiError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Error in find My Profile IntoDb',
+      err.message,
+    );
+  }
+};
+
+const myProfileIntoDb=async(userId:string)=>{
+
+   try{
+return  await users.findById(userId).select("-deviceId -isDelete").lean();
+   }
+    catch (err: any) {
+    if (err instanceof ApiError) throw err;
+
+    throw new ApiError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Error in my Profile IntoDb',
+      err.message,
+    );
+  }
+}
+
     
 
 
@@ -214,7 +229,9 @@ const AuthServices = {
   loginUserIntoDb,
   adminValidationIntoDb,
   find_by_all_users_IntoDb,
-  socialMediaLoginIntoDb
+  socialMediaLoginIntoDb,
+   findMyProfileIntoDb,
+   myProfileIntoDb
 };
 
 export default AuthServices;

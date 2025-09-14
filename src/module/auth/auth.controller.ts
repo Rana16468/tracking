@@ -4,6 +4,7 @@ import AuthServices from './auth.services';
 import sendRespone from '../../utility/sendRespone';
 import httpStatus from 'http-status';
 import config from '../../app/config';
+import users from '../user/user.model';
 
 const loginUser: RequestHandler = catchAsync(async (req, res) => {
   const result = await AuthServices.loginUserIntoDb(req.body);
@@ -56,13 +57,44 @@ const socialMediaLogin:RequestHandler=catchAsync(async(req , res)=>{
     message: 'Successfully Login',
     data: { accessToken },
   });
-})
+});
+
+
+const  findMyProfile:RequestHandler=catchAsync(async(req , res)=>{
+
+    const result=await AuthServices.findMyProfileIntoDb(req.user.id);
+      sendRespone(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Successfully Find My Profile',
+    data:result
+   
+  });
+
+});
+
+
+const myProfile:RequestHandler=catchAsync(async(req , res)=>{
+
+  const result=await AuthServices.myProfileIntoDb(req.user.id);
+   sendRespone(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Successfully Find My Profile',
+    data:result
+   
+  });
+   
+});
+
 
 const AuthController = {
   loginUser,
   adminValidation,
   find_by_all_users,
-  socialMediaLogin
+  socialMediaLogin,
+  findMyProfile,
+  myProfile
 };
 
 export default AuthController;
