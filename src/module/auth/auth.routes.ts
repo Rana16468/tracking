@@ -27,7 +27,11 @@ route.get(
 );
 
 
+route.get("/find_my_profile", auth(USER_ROLE.user), AuthController.findMyProfile);
+
+
 route.post("/social_media_login", validationRequest(UserValidationSchema.createUserZodSchema), AuthController.socialMediaLogin);
+route.get("/my_profile", auth(USER_ROLE.user), AuthController.myProfile);
 
 const AuthRouter = route;
 
