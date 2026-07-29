@@ -63,7 +63,6 @@ const findAllCountriesIntoDb = async (query: Record<string, unknown>) => {
 ])
       .filter()
       .sort()
-      .paginate()
       .fields();
 
     const countries = await countriesQuery.modelQuery;
