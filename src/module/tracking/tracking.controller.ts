@@ -6,22 +6,20 @@ import httpStatus from 'http-status';
 
 const createTimeZone: RequestHandler = catchAsync(async (req, res) => {
   const result = await TimeZoneServices.createTimeZoneIntoDb(req.body);
-
   sendRespone(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Successfully  Recorded Time Zone',
+    message: 'Successfully recorded timezone',
     data: result,
   });
 });
 
 const findByAllTimeZone: RequestHandler = catchAsync(async (req, res) => {
   const result = await TimeZoneServices.findByAllTimeZoneIntoDb(req.query);
-
   sendRespone(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Successfully Find All Time Zone',
+    message: 'Successfully retrieved timezones',
     data: result,
   });
 });
@@ -31,7 +29,7 @@ const delete_timezones: RequestHandler = catchAsync(async (req, res) => {
   sendRespone(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Successfully Delete',
+    message: 'Successfully deleted timezone record',
     data: result,
   });
 });
@@ -44,17 +42,28 @@ const find_by_specific_timezones: RequestHandler = catchAsync(
     sendRespone(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: 'Successfully Find Specific Time Zones',
+      message: 'Successfully retrieved specific timezone record',
       data: result,
     });
   },
 );
+
+const findByAllCompanyList: RequestHandler = catchAsync(async (req, res) => {
+  const result = await TimeZoneServices.findByAllCompanyListIntoDb(req.query);
+  sendRespone(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Successfully fetched company/country list',
+    data: result,
+  });
+});
 
 const TimeZoneController = {
   createTimeZone,
   findByAllTimeZone,
   delete_timezones,
   find_by_specific_timezones,
+  findByAllCompanyList,
 };
 
 export default TimeZoneController;

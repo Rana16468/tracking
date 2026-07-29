@@ -1,7 +1,9 @@
 import httpStatus from 'http-status';
+import https from 'https';
 import NodeCache from 'node-cache';
 import ApiError from '../../app/error/ApiError';
 import timezones from './tracking.model';
+import CountryModel from '../country/country.model';
 import { TimeZoneResponse, TTimeZone } from './tracking.interface';
 import QueryBuilder from '../../app/builder/QueryBuilder';
 
@@ -94,28 +96,45 @@ const delete_timezones_IntoDb = async (id: string) => {
 };
 
 
-const find_by_specific_timezones_IntoDb=async(id:string)=>{
-
-    try{
-
-       return await timezones.findById(id);
-
-
-    }
-    catch (error: any) {
+const find_by_specific_timezones_IntoDb = async (id: string) => {
+  try {
+    return await timezones.findById(id);
+  } catch (error: any) {
     throw new ApiError(
       httpStatus.INTERNAL_SERVER_ERROR,
       'Error find_by_specific_timezones_IntoDb',
       error?.message || error,
     );
   }
-}
+};
+
+
+
+const findByAllCompanyListIntoDb = async (query: Record<string, unknown> = {}) => {
+  try {
+
+    const response = await fetch(
+  'https://api.restcountries.com/countries/v5?offset=50&limit=1',
+  { headers: { 'Authorization': 'Bearer rc_live_35bec5ef8fbb4bb89040b08008184ac7' } }
+);
+const data = await response.json();
+return data
+    
+  } catch (error: any) {
+    throw new ApiError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Error fetching and storing company/country list from external API',
+      error?.message || error,
+    );
+  }
+};
 
 const TimeZoneServices = {
   createTimeZoneIntoDb,
   findByAllTimeZoneIntoDb,
   delete_timezones_IntoDb,
-  find_by_specific_timezones_IntoDb
+  find_by_specific_timezones_IntoDb,
+  findByAllCompanyListIntoDb,
 };
 
 export default TimeZoneServices;
