@@ -52,7 +52,7 @@ const findAllCountriesIntoDb = async (query: Record<string, unknown>) => {
       query
     )
       .search([
-  "name",
+   "name",
   "alpha2Code",
   "alpha3Code",
   "subregion",
@@ -60,6 +60,15 @@ const findAllCountriesIntoDb = async (query: Record<string, unknown>) => {
   "demonym",
   "nativeName",
   "numericCode",
+  "capital",
+  "flag",
+  "population",
+  "area",
+  "languages",
+  "currencies",
+  "timezones",
+  "callingCodes",
+  "altSpellings",
 ])
       .filter()
       .sort()
