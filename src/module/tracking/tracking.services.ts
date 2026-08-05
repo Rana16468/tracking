@@ -1,4 +1,5 @@
 import httpStatus from 'http-status';
+import https from 'https';
 import NodeCache from 'node-cache';
 import ApiError from '../../app/error/ApiError';
 import timezones from './tracking.model';

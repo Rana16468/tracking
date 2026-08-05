@@ -18,11 +18,13 @@ router.get(
   auth(USER_ROLE.admin),
   TimeZoneController.findByAllTimeZone,
 );
+
 router.delete(
   '/delete_timezones/:id',
   auth(USER_ROLE.admin),
   TimeZoneController.delete_timezones,
 );
+
 router.get(
   '/find_by_specific_timezones/:id',
   auth(USER_ROLE.admin),
