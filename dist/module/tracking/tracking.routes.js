@@ -1,0 +1,25 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const validationRequest_1 = __importDefault(require("../../middleware/validationRequest"));
+const tracking_validation_1 = __importDefault(require("./tracking.validation"));
+const tracking_controller_1 = __importDefault(require("./tracking.controller"));
+const auth_1 = __importDefault(require("../../middleware/auth"));
+const user_constant_1 = require("../user/user.constant");
+const router = express_1.default.Router();
+router.patch('/create_timezone_coords', (0, validationRequest_1.default)(tracking_validation_1.default.TTimeZoneSchemaZ), tracking_controller_1.default.createTimeZone);
+router.get('/find_all_time_zone', (0, auth_1.default)(user_constant_1.USER_ROLE.admin), tracking_controller_1.default.findByAllTimeZone);
+router.delete('/delete_timezones/:id', (0, auth_1.default)(user_constant_1.USER_ROLE.admin), tracking_controller_1.default.delete_timezones);
+router.get('/find_by_specific_timezones/:id', (0, auth_1.default)(user_constant_1.USER_ROLE.admin), tracking_controller_1.default.find_by_specific_timezones);
+router.get('/all_country_create_into_db', tracking_controller_1.default.allCountryCreateIntoDB);
+router.get('/import_all_countries', (0, auth_1.default)(user_constant_1.USER_ROLE.admin), tracking_controller_1.default.importAllCountries);
+router.post('/create_country', (0, auth_1.default)(user_constant_1.USER_ROLE.admin), tracking_controller_1.default.createCountry);
+router.get('/find_all_country', (0, auth_1.default)(user_constant_1.USER_ROLE.admin), tracking_controller_1.default.findByAllCountry);
+router.get('/find_by_specific_country/:id', (0, auth_1.default)(user_constant_1.USER_ROLE.admin), tracking_controller_1.default.find_by_specific_country);
+router.patch('/update_country/:id', (0, auth_1.default)(user_constant_1.USER_ROLE.admin), tracking_controller_1.default.update_country);
+router.delete('/delete_country/:id', (0, auth_1.default)(user_constant_1.USER_ROLE.admin), tracking_controller_1.default.delete_country);
+const timezoneCoords = router;
+exports.default = timezoneCoords;

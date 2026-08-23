@@ -1,5 +1,4 @@
 node_modules
-dist
 .env
 .vercel
 
@@ -10,3 +9,4 @@ temp_interactive_push.bat
 
 .vercel
 .env*
+branch_structure.json

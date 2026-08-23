@@ -1,0 +1,83 @@
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const mongoose_1 = require("mongoose");
+const WeatherConditionSchema = new mongoose_1.Schema({
+    text: { type: String, required: true, trim: true },
+    icon: { type: String, required: true, trim: true },
+    code: { type: Number, required: true },
+}, { _id: false });
+const WeatherLocationSchema = new mongoose_1.Schema({
+    name: { type: String, required: true, trim: true },
+    region: { type: String, required: false, trim: true },
+    country: { type: String, required: true, trim: true },
+    lat: { type: Number, required: true },
+    lon: { type: Number, required: true },
+    tz_id: { type: String, required: true, trim: true },
+    localtime_epoch: { type: Number, required: true },
+    localtime: { type: String, required: true, trim: true },
+}, { _id: false });
+const WeatherCurrentSchema = new mongoose_1.Schema({
+    last_updated_epoch: { type: Number, required: true },
+    last_updated: { type: String, required: true, trim: true },
+    temp_c: { type: Number, required: true },
+    temp_f: { type: Number, required: true },
+    is_day: { type: Number, required: true, enum: [0, 1] },
+    condition: { type: WeatherConditionSchema, required: true },
+    wind_mph: { type: Number, required: true },
+    wind_kph: { type: Number, required: true },
+    wind_degree: { type: Number, required: true },
+    wind_dir: { type: String, required: true, trim: true },
+    pressure_mb: { type: Number, required: true },
+    pressure_in: { type: Number, required: true },
+    precip_mm: { type: Number, required: true },
+    precip_in: { type: Number, required: true },
+    humidity: { type: Number, required: true },
+    cloud: { type: Number, required: true },
+    feelslike_c: { type: Number, required: true },
+    feelslike_f: { type: Number, required: true },
+    windchill_c: { type: Number, required: true },
+    windchill_f: { type: Number, required: true },
+    heatindex_c: { type: Number, required: true },
+    heatindex_f: { type: Number, required: true },
+    dewpoint_c: { type: Number, required: true },
+    dewpoint_f: { type: Number, required: true },
+    vis_km: { type: Number, required: true },
+    vis_miles: { type: Number, required: true },
+    uv: { type: Number, required: true },
+    gust_mph: { type: Number, required: true },
+    gust_kph: { type: Number, required: true },
+}, { _id: false });
+const WeatherResponseSchema = new mongoose_1.Schema({
+    visitorId: { type: String, required: true, unique: true, trim: true },
+    location: { type: WeatherLocationSchema, required: true },
+    current: { type: WeatherCurrentSchema, required: true },
+    isDelete: { type: Boolean, required: false }
+}, { timestamps: true });
+WeatherResponseSchema.pre('find', function (next) {
+    this.where({ isDelete: { $ne: true } });
+    next();
+});
+WeatherResponseSchema.pre('findOne', function (next) {
+    this.where({ isDelete: { $ne: true } });
+    next();
+});
+WeatherResponseSchema.pre('aggregate', function (next) {
+    this.pipeline().unshift({ $match: { isDelete: { $ne: true } } });
+    next();
+});
+WeatherResponseSchema.statics.IsIpWeatherModalExist = function (id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return this.findOne({ visitorId: id }).exec();
+    });
+};
+const ipweathers = (0, mongoose_1.model)('ipweathers', WeatherResponseSchema);
+exports.default = ipweathers;

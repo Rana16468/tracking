@@ -1,0 +1,27 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const validationRequest_1 = __importDefault(require("../../middleware/validationRequest"));
+const device_info_validation_1 = __importDefault(require("./device_info.validation"));
+const device_info_controller_1 = __importDefault(require("./device_info.controller"));
+const auth_1 = __importDefault(require("../../middleware/auth"));
+const user_constant_1 = require("../user/user.constant");
+const router = express_1.default.Router();
+router.patch('/recorded_device_Info', (0, validationRequest_1.default)(device_info_validation_1.default.DeviceInfoZodSchema), device_info_controller_1.default.recorded_device_Info);
+router.get('/find_by_all_device_info', (0, auth_1.default)(user_constant_1.USER_ROLE.admin), device_info_controller_1.default.findByAllDeviceInfo);
+router.get('/delete_deviceInfos/:id', (0, auth_1.default)(user_constant_1.USER_ROLE.admin), device_info_controller_1.default.delete_deviceInfos);
+router.get('/dashboard_infomation', (0, auth_1.default)(user_constant_1.USER_ROLE.admin), device_info_controller_1.default.dashboard_infomation);
+router.get('/dashboard_timezone_graph', (0, auth_1.default)(user_constant_1.USER_ROLE.admin), device_info_controller_1.default.dashboard_timezone_graph);
+router.get('/dashboard_ipweathers_graph', (0, auth_1.default)(user_constant_1.USER_ROLE.admin), device_info_controller_1.default.dashboard_ipweathers_graph);
+router.get('/dashboard_iplocations_graph', (0, auth_1.default)(user_constant_1.USER_ROLE.admin), device_info_controller_1.default.dashboard_iplocations_graph);
+router.get('/dashboard_deviceinfos_graph', (0, auth_1.default)(user_constant_1.USER_ROLE.admin), device_info_controller_1.default.dashboard_deviceinfos_graph);
+router.get('/dashboard_deviceinfoitems_graph', (0, auth_1.default)(user_constant_1.USER_ROLE.admin), device_info_controller_1.default.dashboard_deviceinfoitems_graph);
+router.get('/dashboard_browserdetails_graph', (0, auth_1.default)(user_constant_1.USER_ROLE.admin), device_info_controller_1.default.dashboard_browserdetails_graph);
+router.get('/dashboard_contracts_graph', (0, auth_1.default)(user_constant_1.USER_ROLE.admin), device_info_controller_1.default.dashboard_contracts_graph);
+router.get('/dashboard_users_graph', (0, auth_1.default)(user_constant_1.USER_ROLE.admin), device_info_controller_1.default.dashboard_users_graph);
+router.delete(`/delete_deviceInfos/:id`, (0, auth_1.default)(user_constant_1.USER_ROLE.admin), device_info_controller_1.default.delete_deviceInfos);
+const DeviceInfoRoutes = router;
+exports.default = DeviceInfoRoutes;
