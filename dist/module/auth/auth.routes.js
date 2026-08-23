@@ -1,0 +1,21 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const validationRequest_1 = __importDefault(require("../../middleware/validationRequest"));
+const auth_validation_1 = __importDefault(require("./auth.validation"));
+const auth_controller_1 = __importDefault(require("./auth.controller"));
+const auth_1 = __importDefault(require("../../middleware/auth"));
+const user_constant_1 = require("../user/user.constant");
+const user_validation_1 = __importDefault(require("../user/user.validation"));
+const route = express_1.default.Router();
+route.post('/login_user', (0, validationRequest_1.default)(auth_validation_1.default.AuthSchema), auth_controller_1.default.loginUser);
+route.get('/admin_access/:id', (0, auth_1.default)(user_constant_1.USER_ROLE.admin), auth_controller_1.default.adminValidation);
+route.get('/find_by_all_users', (0, auth_1.default)(user_constant_1.USER_ROLE.admin), auth_controller_1.default.find_by_all_users);
+route.get("/find_my_profile", (0, auth_1.default)(user_constant_1.USER_ROLE.user), auth_controller_1.default.findMyProfile);
+route.post("/social_media_login", (0, validationRequest_1.default)(user_validation_1.default.createUserZodSchema), auth_controller_1.default.socialMediaLogin);
+route.get("/my_profile", (0, auth_1.default)(user_constant_1.USER_ROLE.user), auth_controller_1.default.myProfile);
+const AuthRouter = route;
+exports.default = AuthRouter;
